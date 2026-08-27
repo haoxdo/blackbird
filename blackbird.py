@@ -28,8 +28,7 @@ load_dotenv()
 
 
 def initiate():
-    if not os.path.exists("logs/"):
-        os.makedirs("logs/")
+    os.makedirs(os.path.dirname(config.LOG_PATH), exist_ok=True)
     logging.basicConfig(
         filename=config.LOG_PATH,
         level=logging.DEBUG,
@@ -170,7 +169,7 @@ def initiate():
     config.currentUser = None
     config.currentEmail = None
 
-    lines = getLinesFromFile("assets/text/splash.txt")
+    lines = getLinesFromFile(config.SPLASH_PATH)
     config.splash_line = random.choice(lines) if lines else ""
 
 

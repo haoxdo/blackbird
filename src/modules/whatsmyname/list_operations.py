@@ -31,6 +31,7 @@ def readList(option, config):
 # Download .JSON file list from defined URL
 def downloadList(config):
     response = do_sync_request("GET", config.USERNAME_LIST_URL, config)
+    os.makedirs(os.path.dirname(config.USERNAME_LIST_PATH), exist_ok=True)
     with open(config.USERNAME_LIST_PATH, "w", encoding="UTF-8") as f:
         json.dump(response.json(), f, indent=4, ensure_ascii=False)
 
