@@ -2,14 +2,14 @@ from pathlib import Path
 from rich.markup import escape
 import os
 
+import config as appConfig
+
 
 # Creates directory to save PDF, CSV and HTML content
 def createSaveDirectory(config):
     folderName = generateName(config)
 
-    strPath = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..", "results", Path(folderName)
-    )
+    strPath = os.path.join(appConfig.RESULTS_PATH, folderName)
     config.saveDirectory = strPath
     path = Path(strPath)
     if not path.exists():

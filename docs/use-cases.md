@@ -10,8 +10,10 @@ python blackbird.py --username username1 username2 username3 --email email@email
 
 ### Reverse search multiple emails and usernames and export to PDF and CSV
 
+CSV export is on by default, so only `--pdf` needs to be requested:
+
 ```bash
-python blackbird.py --pdf --csv --username username1 username2 username3 --email email@email.com email1@email.com email2@email.com
+python blackbird.py --pdf --username username1 username2 username3 --email email@email.com email1@email.com email2@email.com
 ```
 
 ### Reverse search a username on Instagram to obtain obfuscated email and phone number

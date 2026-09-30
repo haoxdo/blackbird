@@ -21,6 +21,7 @@ from modules.export.csv import saveToCsv
 from modules.export.pdf import saveToPdf
 from modules.export.json import saveToJson
 from modules.utils.file_operations import isFile, getLinesFromFile
+from modules.utils.cleanup import cleanLogs
 from modules.utils.permute import Permute
 from dotenv import load_dotenv
 
@@ -28,8 +29,7 @@ load_dotenv()
 
 
 def initiate():
-    if not os.path.exists("logs/"):
-        os.makedirs("logs/")
+    os.makedirs(os.path.dirname(config.LOG_PATH), exist_ok=True)
     logging.basicConfig(
         filename=config.LOG_PATH,
         level=logging.DEBUG,
@@ -75,7 +75,13 @@ def initiate():
     parser.add_argument(
         "--csv",
         action="store_true",
-        help="Generate a CSV with the results."
+        help="Generate a CSV with the results (enabled by default)."
+    )
+
+    parser.add_argument(
+        "--no-csv",
+        action="store_true",
+        help="Don't generate a CSV with the results."
     )
 
     parser.add_argument(
@@ -129,6 +135,11 @@ def initiate():
         "--no-update", action="store_true", help="Don't update sites lists."
     )
     parser.add_argument(
+        "--no-clean",
+        action="store_true",
+        help="Keep the log file after the search instead of removing it.",
+    )
+    parser.add_argument(
         "--about", action="store_true", help="Show about information and exit."
     )
     args = parser.parse_args()
@@ -138,7 +149,8 @@ def initiate():
     config.username_file = args.username_file
     config.permute = args.permute
     config.permuteall = args.permuteall
-    config.csv = args.csv
+    # CSV results are saved by default; --no-csv opts out.
+    config.csv = not args.no_csv
     config.pdf = args.pdf
     config.json = args.json
     config.filter = args.filter
@@ -153,6 +165,8 @@ def initiate():
     config.email = args.email
     config.email_file = args.email_file
     config.no_update = args.no_update
+    # Logs are removed once the search finishes; --no-clean opts out.
+    config.clean = not args.no_clean
     config.about = args.about
     config.instagram_session_id = os.getenv("INSTAGRAM_SESSION_ID")
     config.api_url = os.getenv("API_URL")
@@ -170,7 +184,7 @@ def initiate():
     config.currentUser = None
     config.currentEmail = None
 
-    lines = getLinesFromFile("assets/text/splash.txt")
+    lines = getLinesFromFile(config.SPLASH_PATH)
     config.splash_line = random.choice(lines) if lines else ""
 
 
@@ -276,7 +290,8 @@ if __name__ == "__main__":
             )
         for user in config.username:
             config.currentUser = user
-            if config.dump or config.csv or config.pdf or config.json:
+            # CSV is written after the search, so its directory is created lazily.
+            if config.dump or config.pdf or config.json:
                 createSaveDirectory(config)
             verifyUsername(config.currentUser, config)
             if config.ai:
@@ -296,6 +311,7 @@ if __name__ == "__main__":
                     )
 
             if config.csv and config.usernameFoundAccounts:
+                createSaveDirectory(config)
                 saveToCsv(config.usernameFoundAccounts, config)
             if config.pdf and config.usernameFoundAccounts:
                 saveToPdf(config.usernameFoundAccounts, "username", config)
@@ -318,7 +334,8 @@ if __name__ == "__main__":
     if config.email:
         for email in config.email:
             config.currentEmail = email
-            if config.dump or config.csv or config.pdf or config.json:
+            # CSV is written after the search, so its directory is created lazily.
+            if config.dump or config.pdf or config.json:
                 createSaveDirectory(config)
             verifyEmail(email, config)
             if config.ai:
@@ -338,6 +355,7 @@ if __name__ == "__main__":
                     )
 
             if config.csv and config.emailFoundAccounts:
+                createSaveDirectory(config)
                 saveToCsv(config.emailFoundAccounts, config)
             if config.pdf and config.emailFoundAccounts:
                 saveToPdf(config.emailFoundAccounts, "email", config)
@@ -345,3 +363,6 @@ if __name__ == "__main__":
                 saveToJson(config.emailFoundAccounts, config)
             config.currentEmail = None
             config.emailFoundAccounts = None
+
+    if config.clean:
+        cleanLogs(config)

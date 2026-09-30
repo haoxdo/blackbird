@@ -1,6 +1,9 @@
 import sys
 import os
 import json
+import atexit
+import shutil
+import tempfile
 import unittest
 from rich.console import Console
 
@@ -13,6 +16,12 @@ from src.modules.export.file_operations import createSaveDirectory
 from datetime import datetime
 
 config.console = Console()
+
+# Write test exports to a throwaway directory so they never end up in the real
+# results directory.
+_testResultsPath = tempfile.mkdtemp(prefix="blackbird_test_results_")
+atexit.register(shutil.rmtree, _testResultsPath, ignore_errors=True)
+config.RESULTS_PATH = _testResultsPath
 
 config.no_nsfw = None
 config.proxy = None
