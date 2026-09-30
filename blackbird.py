@@ -290,7 +290,8 @@ if __name__ == "__main__":
             )
         for user in config.username:
             config.currentUser = user
-            if config.dump or config.csv or config.pdf or config.json:
+            # CSV is written after the search, so its directory is created lazily.
+            if config.dump or config.pdf or config.json:
                 createSaveDirectory(config)
             verifyUsername(config.currentUser, config)
             if config.ai:
@@ -310,6 +311,7 @@ if __name__ == "__main__":
                     )
 
             if config.csv and config.usernameFoundAccounts:
+                createSaveDirectory(config)
                 saveToCsv(config.usernameFoundAccounts, config)
             if config.pdf and config.usernameFoundAccounts:
                 saveToPdf(config.usernameFoundAccounts, "username", config)
@@ -332,7 +334,8 @@ if __name__ == "__main__":
     if config.email:
         for email in config.email:
             config.currentEmail = email
-            if config.dump or config.csv or config.pdf or config.json:
+            # CSV is written after the search, so its directory is created lazily.
+            if config.dump or config.pdf or config.json:
                 createSaveDirectory(config)
             verifyEmail(email, config)
             if config.ai:
@@ -352,6 +355,7 @@ if __name__ == "__main__":
                     )
 
             if config.csv and config.emailFoundAccounts:
+                createSaveDirectory(config)
                 saveToCsv(config.emailFoundAccounts, config)
             if config.pdf and config.emailFoundAccounts:
                 saveToPdf(config.emailFoundAccounts, "email", config)
