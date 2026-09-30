@@ -30,6 +30,10 @@ pip install -r requirements.txt
 python blackbird.py --username johndoe
 ```
 
+Results are saved as a CSV in the `results/` directory by default. Pass `--no-csv` to disable this.
+
+Blackbird's log file is removed once the search completes, leaving only the exported results. Pass `--no-clean` to keep it.
+
 **Search by email**
 
 ```bash

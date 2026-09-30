@@ -44,8 +44,16 @@ python blackbird.py --username p1ngul1n0 --pdf
 
 #### CSV
 
+A CSV is saved to the `results/` directory automatically after every search, so no flag is required:
+
 ```
-python blackbird.py --username username1 --csv
+python blackbird.py --username username1
+```
+
+To skip the CSV export, use `--no-csv`:
+
+```
+python blackbird.py --username username1 --no-csv
 ```
 
 #### JSON
@@ -60,4 +68,14 @@ Dump all found account HTTP responses.
 
 ```
 python blackbird.py --username username1 --dump
+```
+
+### 🧹 Log Cleanup
+
+Blackbird removes its own log file (`logs/blackbird.log`) once a search finishes, so only the exported results remain on disk.
+
+To keep the log for troubleshooting, use `--no-clean`:
+
+```
+python blackbird.py --username username1 --no-clean
 ```
